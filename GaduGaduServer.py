@@ -1,10 +1,21 @@
-class GaduGaduServer():
-    def __init__(self, socketServer):
-        self.socketServer = socketServer
+from flask import Flask
+from flask_classful import FlaskView,route
+class GaduGaduServerView(FlaskView):
+    route_base='/users'
+    def __init__(self):
         self.users_list = []
-       
-       
+    def index(self):
+       return self.priv_get_users()
+    def get(self,args):
+        print (args)
+        return "test"
+    def post(self):
+       print("adadad")
+       return "Karolka"
+
     def Process(self):
+      self.app.run(debug=True)
+      return
       rcvData = self.socketServer.CheckForMsg()
       for socket,data in rcvData:
           parsedData = data.split(":",1)
@@ -14,6 +25,7 @@ class GaduGaduServer():
             self.priv_process_msg_to(socket,parsedData[1])
           elif parsedData[0] == "ERROR" or parsedData[0] == "DISCONNECT":
             self.priv_process_error(socket)
+       
 
     def priv_get_nick_to_socket_from_user_list(self, socket):
         return_nick = ""
@@ -23,7 +35,7 @@ class GaduGaduServer():
                 break
         return return_nick
 
-    def priv_send_users(self):
+    def priv_get_users(self):
         dataToSend = "USERS:";
         nickList = []
         socketList = []
@@ -31,9 +43,7 @@ class GaduGaduServer():
             nickList.append(nick)
             socketList.append(socket)
         dataToSend += ",".join(nickList)
-        
-        for socket in socketList:
-            self.socketServer.SendTo(socket,dataToSend)
+        return dataToSend
 
     def priv_process_error(self,socket):
         nick_to_remove = self.priv_get_nick_to_socket_from_user_list(socket)

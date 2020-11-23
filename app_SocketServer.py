@@ -1,12 +1,10 @@
-from SocketServer import SocketServer
-from CheckInput import CheckInput
-from GaduGaduServer import GaduGaduServer
-server = SocketServer()
-ggServer = GaduGaduServer(server)
+from flask import Flask
+from flask_classful import FlaskView,route
+from GaduGaduServer import GaduGaduServerView
+ggServer = GaduGaduServerView()
+app = Flask("GaduGadu")
+ggServer.register(app)
 print ("Enter exit to close server!")
-while True :
-    server.CheckForNewClient()
-    ggServer.Process()
-    MESSAGE = CheckInput()
-    if MESSAGE == 'exit':
-        break
+#    server.CheckForNewClient()
+app.run(debug=True)
+
